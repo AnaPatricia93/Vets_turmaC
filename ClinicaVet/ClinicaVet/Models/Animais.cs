@@ -9,6 +9,8 @@ namespace ClinicaVet.Models
 {
     /// <summary>
     /// Classe representa a tabela dos 'Animais' na base de dados
+    /// Quando terminar fazer 'Add-Migration inicialCommit' - os nomes devem ser sempre diferentes
+    /// Verificar se a pasta 'Migrations foi criada' e ver ficheiro criado com atenção
     /// </summary>
     public class Animais
     {
