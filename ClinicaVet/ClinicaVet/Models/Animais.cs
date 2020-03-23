@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,9 +12,14 @@ namespace ClinicaVet.Models
     /// </summary>
     public class Animais
     {
+        public Animais()
+        {
+            ListaDeConsultas = new HashSet<Consultas>();
+        }
         /// <summary>
         /// Pk da tabela 
         /// </summary>
+        [Key]
         public int ID { set; get; }
         /// <summary>
         /// noem do animal
@@ -34,5 +41,17 @@ namespace ClinicaVet.Models
         /// Nome do ficheiro coma  fotografia do animal
         /// </summary>
         public string Foto { get; set; }
+
+        /// <summary>
+        /// FK para a tabela Donos
+        /// </summary>
+        [ForeignKey(nameof(Dono))]
+        public int DonoPK { get; set; }
+        public Donos Dono { get; set; }
+
+        //lista de consultas 
+        public ICollection<Consultas> ListaDeConsultas { get; set; }
     }
+
+   
 }

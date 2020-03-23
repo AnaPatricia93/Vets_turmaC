@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,21 +11,19 @@ namespace ClinicaVet.Models
     /// </summary>
     public class Veterinarios
     {
-        /// <summary>
-        /// PK da tabela
-        /// </summary>
+        //inicializae«r a lista de consultas
+        public Veterinarios()
+        {
+            ListaDeConsultas = new HashSet<Consultas>();
+        }
+
+        [Key]
         public int ID { get; set; }
-        /// <summary>
-        /// Nome do veterinário
-        /// </summary>
         public string Nome { get; set; }
-        /// <summary>
-        /// Numero da cédula profissional em string
-        /// </summary>
         public string NumCedulaProf { get; set; }
-        /// <summary>
-        /// Nome do ficheiro com foto
-        /// </summary>
         public string Foto { get; set; }
     }
+
+    //lista de 'consultas' que o Vsterinario está associado
+    public ICollection<Consultas> ListaDeConsultas { get; set; }
 }

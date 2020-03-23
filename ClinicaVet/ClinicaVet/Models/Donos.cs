@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,17 +10,20 @@ namespace ClinicaVet.Models
     /// Classe representa a tabela dos 'Donos' na base de dados
     /// </summary>
     public class Donos
-    {   /// <summary>
-        /// PK da tabela
-        /// </summary>
+    {   
+        public Donos()
+        {   //inicializar a lista de animais associados a um 'Dono'
+            ListaDeAnimais = new HashSet<Animais>();
+        }
+
+        [Key]
         public int ID { get; set; }
-        /// <summary>
-        /// Nome do Dono
-        /// </summary>
         public string Nome { get; set; }
-        /// <summary>
-        /// Numero de Identificação fiscal em string pois não vamos efetuar operacoes com este numero
-        /// </summary>
         public string NIF { get; set; }
+
+        //especificar que o Dono também tem VÁRIOS animais, para pudermos navegar depois em C#
+        //lista dos animais que o Dono tem
+        public ICollection<Animais> ListaDeAnimais { get; set; }
+
     }
 }

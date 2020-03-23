@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,17 +12,19 @@ namespace ClinicaVet.Models
     /// </summary>
     public class Consultas
     {
-        /// <summary>
-        /// PK da tabela
-        /// </summary>
+        [Key] // força o atributo a ser PK. Mas, não seria necessário porque o atributo se chama 'ID'
         public int ID { get; set; }
-        /// <summary>
-        /// representa o horário da consulta
-        /// </summary>
         public DateTime Data { get; set; }
-        /// <summary>
-        /// varchar com dimensao máxima (SQL)
-        /// </summary>
         public string Observacoes { get; set; }
+
+        //criar as chaves estrangeiras/forasteiras FK
+        [ForeignKey(nameof(Veterinario))]
+        public int VeterinarioFK { get; set; }
+        public Veterinarios Veterinario { get; set; }
+
+        [ForeignKey(nameof(Animal))]
+        public int AnimalFK { get; set; }
+        public Animais Animal { get; set; }
+
     }
 }
