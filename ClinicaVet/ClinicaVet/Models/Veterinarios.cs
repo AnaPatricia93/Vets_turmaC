@@ -19,11 +19,15 @@ namespace ClinicaVet.Models
 
         [Key]
         public int ID { get; set; }
+        [Required(ErrorMessage ="O {0} é de preenchimento obrigatório.")] // not null
+        [StringLength(40,ErrorMessage ="O {0} só pode ter´, no máximo, {1} caracteres.")] // 0 é sempre nome do atributo     1 é sempre parametro
         public string Nome { get; set; }
+        [Required(ErrorMessage ="O {0} é de preenchimento obrigatório.")]
         public string NumCedulaProf { get; set; }
+        [Required(ErrorMessage ="A {0} é de preenchimento obrigatório")]
         public string Foto { get; set; }
 
-        //lista de 'consultas' que o Vsterinario está associado
+        //lista de 'consultas' que o Veterinário está associado
         public ICollection<Consultas> ListaDeConsultas { get; set; }
     }
 
