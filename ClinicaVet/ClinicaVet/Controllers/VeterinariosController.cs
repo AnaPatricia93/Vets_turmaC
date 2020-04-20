@@ -33,17 +33,25 @@ namespace ClinicaVet.Controllers
         }
 
         // GET: Veterinarios/Details/5
+        /// <summary>
+        /// Mostra os detalhes de um veterinário
+        /// </summary>
+        /// <param name="id">Valor da chave primária do Veterinário. Admite um valor null, por causa do sinal ?</param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
-             //vai a BD veterinarios e vai a procura da primeira ocorrencias
-            var veterinarios = await db.Veterinarios.FirstOrDefaultAsync(m => m.ID == id);
+            //vai a BD veterinarios e vai a procura da primeira ocorrencias
+            // é uma forma diferente de escrever o comando SELCT
+            // SELECT * FROM Veterinarios v WHERE v.ID = id
+            //esta expressão é uma escrita em LINQ  - linguagem de Interrogação para Querys
+            var veterinarios = await db.Veterinarios.FirstOrDefaultAsync(v => v.ID == id);
             if (veterinarios == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
             return View(veterinarios);
@@ -93,16 +101,18 @@ namespace ClinicaVet.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
+            {   // se o ID é null, é porque o meu utilizador está a testar a minha aplicação
+                //return NotFound();
+                //redireciono então para o método INDEX, deste mesmo controller
+                return RedirectToAction("Index");
             }
-
-            var veterinarios = await db.Veterinarios.FindAsync(id);
-            if (veterinarios == null)
+            
+            var veterinario = await db.Veterinarios.FindAsync(id);
+            if (veterinario == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
-            return View(veterinarios);
+            return View(veterinario);
         }
 
         // POST: Veterinarios/Edit/5
@@ -110,9 +120,9 @@ namespace ClinicaVet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Nome,NumCedulaProf,Foto")] Veterinarios veterinarios)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Nome,NumCedulaProf,Foto")] Veterinarios veterinario)
         {
-            if (id != veterinarios.ID)
+            if (id != veterinario.ID)
             {
                 return NotFound();
             }
@@ -121,12 +131,12 @@ namespace ClinicaVet.Controllers
             {
                 try
                 {
-                    db.Update(veterinarios);
+                    db.Update(veterinario);
                     await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VeterinariosExists(veterinarios.ID))
+                    if (!VeterinariosExists(veterinario.ID))
                     {
                         return NotFound();
                     }
@@ -137,7 +147,7 @@ namespace ClinicaVet.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(veterinarios);
+            return View(veterinario);
         }
 
         // GET: Veterinarios/Delete/5
@@ -145,17 +155,17 @@ namespace ClinicaVet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
-            var veterinarios = await db.Veterinarios
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (veterinarios == null)
+            var veterinario = await db.Veterinarios
+                .FirstOrDefaultAsync(v => v.ID == id);
+            if (veterinario == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
-            return View(veterinarios);
+            return View(veterinario);
         }
 
         // POST: Veterinarios/Delete/5
@@ -163,8 +173,8 @@ namespace ClinicaVet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var veterinarios = await db.Veterinarios.FindAsync(id);
-            db.Veterinarios.Remove(veterinarios);
+            var veterinario = await db.Veterinarios.FindAsync(id);
+            db.Veterinarios.Remove(veterinario);
             await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -172,7 +182,7 @@ namespace ClinicaVet.Controllers
         // dado um certo ID pergunta se existe algum registo com esse ID dentro da BD
         private bool VeterinariosExists(int id)
         {
-            return db.Veterinarios.Any(e => e.ID == id);
+            return db.Veterinarios.Any(v => v.ID == id);
         }
     }
 }

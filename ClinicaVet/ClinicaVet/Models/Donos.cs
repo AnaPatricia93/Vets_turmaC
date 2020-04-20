@@ -25,6 +25,8 @@ namespace ClinicaVet.Models
                  ErrorMessage = "Só são aceites nomes, começados por letra Maiúscula, separados entre si por um espaço em branco.")]
         public string Nome { get; set; }
 
+        public string Sexo { get; set; } //ficar F com defeito - não existe anotador por defeito
+
         [Required(ErrorMessage = "O {0} é de preenchimento obrigatório.")]
         // o primeiro digito não pode ser 0
         // se fosse [0-9]{9} estariamos a admitir '000000000'

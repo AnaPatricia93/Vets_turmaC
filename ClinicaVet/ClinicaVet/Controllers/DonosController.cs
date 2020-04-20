@@ -12,17 +12,17 @@ namespace ClinicaVet.Controllers
 {
     public class DonosController : Controller
     {
-        private readonly VetsDB _context;
+        private readonly VetsDB db;
 
         public DonosController(VetsDB context)
         {
-            _context = context;
+            db = context;
         }
 
         // GET: Donos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Donos.ToListAsync());
+            return View(await db.Donos.ToListAsync());
         }
 
         // GET: Donos/Details/5
@@ -30,17 +30,16 @@ namespace ClinicaVet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
-            var donos = await _context.Donos
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (donos == null)
+            var dono = await db.Donos.FirstOrDefaultAsync(m => m.ID == id);
+            if (dono == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
-            return View(donos);
+            return View(dono);
         }
 
         // GET: Donos/Create
@@ -54,15 +53,15 @@ namespace ClinicaVet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Nome,NIF")] Donos donos)
+        public async Task<IActionResult> Create([Bind("ID,Nome,NIF")] Donos dono)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(donos);
-                await _context.SaveChangesAsync();
+                db.Add(dono);
+                await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(donos);
+            return View(dono);
         }
 
         // GET: Donos/Edit/5
@@ -70,15 +69,15 @@ namespace ClinicaVet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
-            var donos = await _context.Donos.FindAsync(id);
-            if (donos == null)
+            var dono = await db.Donos.FindAsync(id);
+            if (dono == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
-            return View(donos);
+            return View(dono);
         }
 
         // POST: Donos/Edit/5
@@ -86,9 +85,9 @@ namespace ClinicaVet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Nome,NIF")] Donos donos)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Nome,NIF")] Donos dono)
         {
-            if (id != donos.ID)
+            if (id != dono.ID)
             {
                 return NotFound();
             }
@@ -97,12 +96,12 @@ namespace ClinicaVet.Controllers
             {
                 try
                 {
-                    _context.Update(donos);
-                    await _context.SaveChangesAsync();
+                    db.Update(dono);
+                    await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DonosExists(donos.ID))
+                    if (!DonosExists(dono.ID))
                     {
                         return NotFound();
                     }
@@ -113,7 +112,7 @@ namespace ClinicaVet.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(donos);
+            return View(dono);
         }
 
         // GET: Donos/Delete/5
@@ -121,17 +120,17 @@ namespace ClinicaVet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
-            var donos = await _context.Donos
+            var dono = await db.Donos
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (donos == null)
+            if (dono == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
             }
 
-            return View(donos);
+            return View(dono);
         }
 
         // POST: Donos/Delete/5
@@ -139,15 +138,15 @@ namespace ClinicaVet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var donos = await _context.Donos.FindAsync(id);
-            _context.Donos.Remove(donos);
-            await _context.SaveChangesAsync();
+            var dono = await db.Donos.FindAsync(id);
+            db.Donos.Remove(dono);
+            await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DonosExists(int id)
         {
-            return _context.Donos.Any(e => e.ID == id);
+            return db.Donos.Any(e => e.ID == id);
         }
     }
 }
