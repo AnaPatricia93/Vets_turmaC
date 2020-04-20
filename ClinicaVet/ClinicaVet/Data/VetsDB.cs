@@ -91,10 +91,10 @@ namespace ClinicaVet.Data
 
 
         // adicionar as 'tabelas' à BD
-        public DbSet<Animais> Animais{ get; set; }
-        public DbSet<Donos> Donos{ get; set; }
-        public DbSet<Veterinarios> Veterinarios{ get; set; }
-        public DbSet<Consultas> Consulta{ get; set; }
+        public virtual DbSet<Animais> Animais{ get; set; }
+        public virtual DbSet<Donos> Donos{ get; set; }
+        public virtual DbSet<Veterinarios> Veterinarios{ get; set; }
+        public virtual DbSet<Consultas> Consulta{ get; set; }
         // ver ficheiro startup
     }
 }

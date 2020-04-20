@@ -20,11 +20,11 @@ namespace ClinicaVet.Models
         //criar as chaves estrangeiras/forasteiras FK
         [ForeignKey(nameof(Veterinario))]
         public int VeterinarioFK { get; set; }
-        public Veterinarios Veterinario { get; set; }
+        public virtual Veterinarios Veterinario { get; set; }
 
         [ForeignKey(nameof(Animal))]
         public int AnimalFK { get; set; }
-        public Animais Animal { get; set; }
+        public virtual Animais Animal { get; set; }
 
     }
 }

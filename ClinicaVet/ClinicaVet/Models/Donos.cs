@@ -36,7 +36,7 @@ namespace ClinicaVet.Models
 
         //especificar que o Dono também tem VÁRIOS animais, para pudermos navegar depois em C# (vai-nos simplificar a vida posteriormente
         //lista dos animais que o Dono tem
-        public ICollection<Animais> ListaDeAnimais { get; set; } //Através do Dono, obter lista dos Animais (para não termos de efetuar continuamente pesquisas à BD)
+        public virtual ICollection<Animais> ListaDeAnimais { get; set; } //Através do Dono, obter lista dos Animais (para não termos de efetuar continuamente pesquisas à BD)
 
     }
 }

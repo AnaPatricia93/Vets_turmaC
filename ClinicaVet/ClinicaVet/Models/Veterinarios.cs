@@ -37,8 +37,10 @@ namespace ClinicaVet.Models
         [Required(ErrorMessage ="A {0} é de preenchimento obrigatório")]
         public string Foto { get; set; }
 
-        //lista de 'consultas' que o Veterinário está associado
-        public ICollection<Consultas> ListaDeConsultas { get; set; }
+        /// <summary>
+        /// lista de 'consultas' que o Veterinário está associado
+        /// </summary>
+        public virtual ICollection<Consultas> ListaDeConsultas { get; set; }
     }
 
     

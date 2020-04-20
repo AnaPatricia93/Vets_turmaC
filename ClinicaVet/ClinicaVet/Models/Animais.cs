@@ -49,10 +49,10 @@ namespace ClinicaVet.Models
         /// </summary>
         [ForeignKey(nameof(Dono))] // Ligar Animais ao Dono
         public int DonoFK { get; set; }
-        public Donos Dono { get; set; }
+        public virtual Donos Dono { get; set; }
 
         //lista de consultas 
-        public ICollection<Consultas> ListaDeConsultas { get; set; }
+        public virtual ICollection<Consultas> ListaDeConsultas { get; set; }
     }
 
    
