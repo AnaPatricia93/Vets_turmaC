@@ -1,0 +1,68 @@
+﻿@model ClinicaVet.Models.Veterinarios
+
+@{
+    ViewData["Title"] = "Detalhes de " + @Model.Nome;
+}
+
+<h1>Veterinários</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NumCedulaProf)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NumCedulaProf)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Foto)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="~/Imagens/Vets/@Model.Foto" width="100" alt="Foto do veterinário@item.Foto" title="@Model.Nome" />
+            
+        </dd>
+    </dl>
+</div>
+
+@* Mostrar a lista de consultas de um veterinário*@
+<h4>Lista de Consultas</h4>
+
+@if (Model.ListaDeConsultas.Count==0)
+{
+    <p>Não há Consultas associadas à/ao @Model.Nome</p>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>Data</th>
+            <th>Animal</th>
+            <th>Dono do Animal</th>
+        </tr>
+        @foreach (var consulta in Model.ListaDeConsultas)
+        {
+            <tr>
+                <td>@consulta.Data</td>
+                <td>
+                    <a asp-action="Details" asp-controller="Animais" asp-route-id="@consulta.Animal.ID">@consulta.Animal.Nome</a>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-controller="Donos" asp-route-id="@consulta.Animal.Dono.ID">@consulta.Animal.Dono.Nome</a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+<br />
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Editar</a> |
+    <a asp-action="Index">Regressar à Listagem</a>
+</div>

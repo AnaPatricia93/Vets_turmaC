@@ -34,13 +34,14 @@ namespace ClinicaVet.Models
         [Display(Name = "Nº da Cédula Profissional")]
         public string NumCedulaProf { get; set; }
 
-        [Required(ErrorMessage ="A {0} é de preenchimento obrigatório")]
+        //[Required(ErrorMessage ="A {0} é de preenchimento obrigatório")]
         public string Foto { get; set; }
 
         /// <summary>
         /// lista de 'consultas' que o Veterinário está associado
         /// </summary>
         public virtual ICollection<Consultas> ListaDeConsultas { get; set; }
+        public object Consulta { get; internal set; }
     }
 
     

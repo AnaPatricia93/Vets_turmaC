@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClinicaVet.Data;
 using ClinicaVet.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ClinicaVet.Controllers
 {
@@ -16,11 +19,13 @@ namespace ClinicaVet.Controllers
         /// este atributo representa uma referência à nossa base de dados
         /// </summary>
         private readonly VetsDB db;
-
+        //recolhe nele os dados do servidor
+        private readonly IWebHostEnvironment _caminho;
         //construtor
-        public VeterinariosController(VetsDB context)
+        public VeterinariosController(VetsDB context, IWebHostEnvironment caminho)
         {
-            db = context;
+            this.db = context;
+            this._caminho = caminho;
         }
 
         // GET: Veterinarios - objeto devolvido de forma assincrona (acesso aos dados de forma assincrona)
@@ -34,7 +39,7 @@ namespace ClinicaVet.Controllers
 
         // GET: Veterinarios/Details/5
         /// <summary>
-        /// Mostra os detalhes de um veterinário
+        /// Mostra os detalhes de um veterinário, usando Lazy Loading
         /// </summary>
         /// <param name="id">Valor da chave primária do Veterinário. Admite um valor null, por causa do sinal ?</param>
         /// <returns></returns>
@@ -57,6 +62,46 @@ namespace ClinicaVet.Controllers
             return View(veterinarios);
         }
 
+
+        // GET: Veterinarios/Details/5
+        /// <summary>
+        /// Mostra os detalhes de um veterinário, usando Eager Loading
+        /// </summary>
+        /// <param name="id">Valor da chave primária do Veterinário. Admite um valor null, por causa do sinal ?</param>
+        /// <returns></returns>
+        public async Task<IActionResult> Details2(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+            //é uma forma deiferente de escrever o seguinte comando
+            /// Select * 
+            /// FROM db.Veterinarios v, db.Consultas c, db.Animais a, db.Donos d
+            /// WHERE c.VeterinarioFK=v.ID AND
+            ///     c.AnimalFK=a.ID AND
+            ///     a.AnimaisFK=d.ID AND
+            ///     v.ID = id
+
+            //esta expressão é escrita e, LINQ
+            var veterinarios = await db.Veterinarios
+                                        .Include(v => v.Consulta)
+                                        .ThenInclude(a=> a.Animal)
+                                        .ThenInclude(d => d.Dono)
+                                        .FirstOrDefaultAsync(v => v.ID == id);
+
+            if (veterinarios == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(veterinarios);
+        }
+
+
+
+
+
         // GET: Veterinarios/Create
         /// <summary>
         /// Invocar a view de criação de um novo veterinario
@@ -77,19 +122,75 @@ namespace ClinicaVet.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Nome,NumCedulaProf,Foto")] Veterinarios veterinario)
+        public async Task<IActionResult> Create([Bind("ID,Nome,NumCedulaProf,Foto")] Veterinarios veterinario, iFormFile fotoVet)
         {
+
+            //processar imagem
+
+
+            //vars auxiliares
+            bool haFicheiro = false;
+            string caminhoCompleto = "";
+
+
+            //será q há imagem?
+            if (fotoVet == null)
+            {
+                //o utilizador nao fez upload de um ficheiro
+                veterinario.Foto = "avatar.jpg";
+            }
+            else
+            {
+                //existe fotografia, mas será boa?
+                if(fotoVet.ContentType=="image/jpeg" || fotoVet.ContentType == "image/png")
+                {//estamos perante uma boa foto
+                    //temos de gerar um nome para o ficheiro
+                    Guid g;
+                    g = Guid.NewGuid();
+                    //obter extensão do ficheiro
+                    string extensao = Path.GetExtension(fotoVet.FileName).ToLower();
+                    string nomeFicheiro = g.ToString() + extensao;
+                    //onde guardar o ficheiro
+                    caminhoCompleto = Path.Combine(_caminho.WebRootPath, "imagens\\vets", nomeFicheiro);
+                    //atribuir o nome do ficheiro ao Veterinário
+                    veterinario.Foto = nomeFicheiro;
+                    //marcar que existe uma fotografia
+                    haFicheiro = true;
+                }
+                else
+                {
+                    //o ficheiro não é válido
+                    veterinario.Foto= "avatar.jpg";
+                }
+            }
+
+
+          
+            try
+            {
+                {   // adiciona o novo veterinário à BD, mas na memória do servidor ASP .NET
+                    db.Add(veterinario);
+
+                    // consolida os dados no Servidor BD (commit)
+                    await db.SaveChangesAsync();
+                    //será que há foto para gravar?
+                    if (haFicheiro)
+                    {//ponteiro para espaço de alojamento no disco
+                        using var stream = new FileStream(caminhoCompleto, FileMode.Create);
+                        await fotoVet.CopyToAsync(stream);
+                    }
+
+                    //redireciona a acção para a View do Index
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             //ModelState - objeto interno do ASP.NET que avalia se os dados que vêm do browser estão corretos ou não
             if (ModelState.IsValid)
-            {   // adiciona o novo veterinário à BD, mas na memória do servidor ASP .NET
-                db.Add(veterinario);
 
-                // consolida os dados no Servidor BD (commit)
-                await db.SaveChangesAsync();
-
-                //redireciona a acção para a View do Index
-                return RedirectToAction(nameof(Index));
-            }
 
             // quando ocorre um erro, reenvio os dados do veterinário para a view de criação
             return View(veterinario);

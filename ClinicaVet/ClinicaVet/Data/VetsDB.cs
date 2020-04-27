@@ -25,6 +25,12 @@ namespace ClinicaVet.Data
         /// <param name="options"> parametros de configuracao</param>
         public VetsDB(DbContextOptions<VetsDB> options) : base(options) { }
 
+        //ATIVAÇÃO DO LAZY LOADING ESTÁ A SER FEITO NO STARTUP
+        //protected override void onConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseLazyLoadingProxies();
+        //}
+
 
         //entity framework mudou forma de fazer o seed
         protected override void OnModelCreating(ModelBuilder modelBuilder)

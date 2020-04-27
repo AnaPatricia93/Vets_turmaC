@@ -19,7 +19,7 @@ namespace ClinicaVet
         {
             Configuration = configuration;
         }
-
+        //concretiza interface - serve para ir buscar as configuracoes do servidor
         public IConfiguration Configuration { get; }
 
 
@@ -39,8 +39,11 @@ namespace ClinicaVet
             // especificação do 'tipo' e 'localização' da BD
             //ConnectionString - especifica onde se encontra o servidor de BD e o nome que ele vai ter
             services.AddDbContext<VetsDB>(options =>
-               options.UseSqlServer(
-                   Configuration.GetConnectionString("ConnectionDB")));
+               options
+               .UseSqlServer(Configuration.GetConnectionString("ConnectionDB"))
+               //.UseLazyLoadingProxies()
+
+               );
             //****************************************************************************
             //ver appsettings
 
